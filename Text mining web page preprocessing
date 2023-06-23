@@ -1,0 +1,93 @@
+#pip install nltk
+
+#nltk.download('stopwords')
+
+from bs4 import BeautifulSoup
+
+import requests
+
+import nltk
+
+from nltk.corpus import stopwords
+
+from nltk.tokenize import word_tokenize
+
+from nltk.stem import PorterStemmer
+
+
+
+# Download stopwords and initialize stemmer
+
+stop_words = set(stopwords.words('english'))
+
+stemmer = PorterStemmer()
+
+
+
+# Retrieve webpage content
+
+url = 'https://en.wikipedia.org/wiki/Data_mining&#39';
+
+response = requests.get(url)
+
+
+
+# Parse HTML and extract meta tags
+
+soup = BeautifulSoup(response.content, 'html.parser')
+
+meta_tags = soup.find_all('meta')
+
+
+
+# Extract meta information
+
+title = ''
+
+description = ''
+
+#keywords = []
+
+
+
+for tag in meta_tags:
+
+        title = tag.attrs
+
+        description = tag.attrs
+
+        #print('Title:', title)
+
+        #print('Description:', description)
+
+
+
+# Preprocess content
+
+content = soup.get_text()
+
+#print(content)
+
+tokens = word_tokenize(content)
+
+
+
+filtered_tokens = [token.lower()for token in tokens if token.lower() not in stop_words]
+
+print(filtered_tokens)
+
+stemmed_tokens = [stemmer.stem(token) for token in filtered_tokens]
+
+print(stemmed_tokens)
+
+preprocessed_content = ' '.join(stemmed_tokens)
+
+
+
+# Print results
+
+print('Title:', title)
+
+print('Description:', description)
+
+print('Preprocessed content:', preprocessed_content[0:400])
